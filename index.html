@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* Sayfanın genel stilini tanımlar: siyah arka plan, taşma engelleme */
+    body {
+      background: black;
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+    /* Başlangıç ekranı: tam ekran, flex düzen, slotlar ve düğmeler */
+    #startScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 2000;
+    }
+    .section {
+      width: 100%;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #middleSection {
+      flex-direction: row;
+      justify-content: space-around;
+      background: #333;
+    }
+    /* Slot makinesi alanları: güçlendirme ikonlarını gösterir */
+    .slot {
+      width: 30%;
+      height: 80%;
+      border: 2px solid white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    .slot img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    #bottomSection {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding-bottom: 20px;
+    }
+    /* Butonların stili */
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    /* Oyun başladığında canvas ve kontroller görünür olur */
+    canvas, #gameControls {
+      display: none;
+    }
+    #gameControls {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <!-- Başlangıç ekranı: başlık, slotlar ve butonlar -->
+  <div id="startScreen">
+    <div class="section" id="topSection">
+      <h1>Souls Luck</h1>
+    </div>
+    <div class="section" id="middleSection">
+      <div class="slot" id="slot1"></div>
+      <div class="slot" id="slot2"></div>
+      <div class="slot" id="slot3"></div>
+    </div>
+    <div class="section" id="bottomSection">
+      <button onclick="tryYourLuck()">Şansını Dene</button>
+      <button onclick="startGame()" id="continueButton" style="display: none;">Devam Et</button>
+    </div>
+  </div>
+  <!-- Oyun alanı: grafikler burada çizilir -->
+  <canvas></canvas>
+  <!-- Ses kontrol paneli -->
+  <div id="gameControls">
+    <div style="margin-top: 10px;">
+      <label for="volumeControl">Ses Seviyesi:</label>
+      <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="1">
+    </div>
+  </div>
+  <!-- Arka plan müziği -->
+  <audio id="backgroundMusic" loop>
+    <source src="./audio/background_music.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // Güçlendirme ikonlarının listesi (sağlık, hasar, hız)
+    const images = [
+      { src: './img/health_boost.png', effect: 'health', alt: 'Health Boost' },
+      { src: './img/damage_boost.png', effect: 'damage', alt: 'Damage Boost' },
+      { src: './img/speed_boost.png', effect: 'speed', alt: 'Speed Boost' }
+    ];
+
+    // Slot makinesini çalıştırır: rastgele ikonlar seçer
+    function tryYourLuck() {
+      const selectedImages = [
+        images[Math.floor(Math.random() * images.length)],
+        images[Math.floor(Math.random() * images.length)],
+        images[Math.floor(Math.random() * images.length)]
+      ];
+      document.getElementById('slot1').innerHTML = `<img src="${selectedImages[0].src}" alt="${selectedImages[0].alt}" data-effect="${selectedImages[0].effect}">`;
+      document.getElementById('slot2').innerHTML = `<img src="${selectedImages[1].src}" alt="${selectedImages[1].alt}" data-effect="${selectedImages[1].effect}">`;
+      document.getElementById('slot3').innerHTML = `<img src="${selectedImages[2].src}" alt="${selectedImages[2].alt}" data-effect="${selectedImages[2].effect}">`;
+      document.getElementById('continueButton').style.display = 'block';
+    }
+
+    // Oyunu başlatır: slot etkilerini uygular, ekranı değiştirir
+    function startGame() {
+      const slots = [document.getElementById('slot1'), document.getElementById('slot2'), document.getElementById('slot3')];
+      slots.forEach(slot => {
+        const effect = slot.querySelector('img')?.getAttribute('data-effect');
+        if (effect === 'health') {
+          character.health += 50;
+        } else if (effect === 'damage') {
+          character.attackDamage = (character.attackDamage || 10) + 5; 
+        } else if (effect === 'speed') {
+          character.moveSpeed = (character.moveSpeed || 5) + 2;
+        }
+      });
+      document.getElementById('startScreen').style.display = 'none';
+      document.querySelector('canvas').style.display = 'block';
+      document.getElementById('gameControls').style.display = 'block';
+    }
+
+    // Arka plan müziğini başlatır
+    function startMusic() {
+      const music = document.getElementById('backgroundMusic');
+      music.play().catch(e => {
+        console.log("Müzik çalınamadı:", e);
+        alert("Müzik çalınamadı. Lütfen sayfayı tıklayıp tekrar deneyin.");
+      });
+      music.muted = false;
+      musicUnmuted = true;
+    }
+
+    // Canvas ve çizim bağlamını tanımlar
+    const canvas = document.querySelector('canvas');
+    const c = canvas.getContext('2d');
+    canvas.width = 1920;
+    canvas.height = 932;
+
+    // Yerçekimi sabiti
+    const gravity = 0.5;
+
+    // Oyun dünyasının boyutları
+    const world = {
+      width: 3840,
+      height: 932
+    };
+
+    // Kamerayı tanımlar: karakteri takip eder
+    const camera = {
+      x: 0,
+      y: 0,
+      width: canvas.width,
+      height: canvas.height,
+      follow: function(target) {
+        const targetX = target.position.x - this.width / 2 + target.width / 2;
+        this.x = Math.max(0, Math.min(targetX, world.width - this.width));
+        this.y = 0;
+      }
+    };
+
+    let musicUnmuted = false;
+
+    // Sprite sınıfı: arka plan gibi statik resimleri çizer
+    class Sprite {
+      constructor({ position, imageSrc }) {
+        this.position = position;
+        this.image = new Image();
+        this.image.src = imageSrc;
+        this.loaded = false;
+        this.image.onload = () => {
+          this.loaded = true;
+        };
+      }
+      draw() {
+        if (!this.image || !this.loaded) return;
+        c.drawImage(this.image, -camera.x, 0, world.width, canvas.height);
+      }
+      update() {
+        this.draw();
+      }
+    }
+
+    // Karakter sınıfı: oyuncunun kontrol ettiği karakter
+    class Character {
+      constructor({ position, animations }) {
+        this.position = position;
+        this.velocity = { x: 0, y: 1 };
+        this.width = 120;
+        this.height = 120;
+        this.animations = animations;
+        this.currentAnimation = 'idle';
+        this.frameIndex = 0;
+        this.frameCount = 0;
+        this.facingRight = true;
+        this.health = 100;
+        this.isAlive = true;
+        this.attackHit = false;
+        this.attackDamage = 10;
+        this.moveSpeed = 5;
+      }
+      // Karakteri çizer, yönüne göre aynalar
+      draw() {
+        if (!this.isAlive) return;
+        const anim = this.animations[this.currentAnimation];
+        if (!anim.image || !anim.loaded) return;
+        c.save();
+        if (!this.facingRight) {
+          c.scale(-1, 1);
+          c.translate(-canvas.width, 0);
+        }
+        const drawX = this.facingRight ? 
+                     this.position.x - camera.x : 
+                     canvas.width - (this.position.x - camera.x) - this.width;
+        c.drawImage(
+          anim.image,
+          this.frameIndex * anim.frameWidth,
+          0,
+          anim.frameWidth,
+          anim.frameHeight,
+          drawX,
+          this.position.y - camera.y,
+          this.width,
+          this.height
+        );
+        c.restore();
+      }
+      // Hasar alır, sağlık sıfırsa ölür
+      takeDamage(amount) {
+        if (!this.isAlive) return;
+        this.health -= amount;
+        if (this.health <= 0) {
+          this.health = 0;
+          this.isAlive = false;
+          this.currentAnimation = 'idle';
+          this.velocity.x = 0;
+        } else {
+          this.setAnimation('hurt');
+        }
+      }
+      // Karakteri günceller: fizik, animasyon, sınırlar
+      update() {
+        if (!this.isAlive) return;
+        const anim = this.animations[this.currentAnimation];
+        this.frameCount++;
+        if (this.frameCount >= 60 / anim.frameRate) {
+          this.frameIndex = (this.frameIndex + 1) % anim.frameCount;
+          this.frameCount = 0;
+          if ((this.currentAnimation === 'attack' || this.currentAnimation === 'jump' || this.currentAnimation === 'hurt') && this.frameIndex === 0) {
+            if (this.currentAnimation === 'attack') {
+              this.attackHit = false;
+            }
+            this.currentAnimation = 'idle';
+          }
+        }
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+        this.position.x = Math.max(0, Math.min(this.position.x, world.width - this.width));
+        if (this.position.y + this.height + this.velocity.y >= canvas.height - 180) {
+          this.velocity.y = 0;
+          this.position.y = canvas.height - 180 - this.height;
+          if (this.currentAnimation === 'jump') {
+            this.currentAnimation = 'idle';
+          }
+        } else {
+          this.velocity.y += gravity;
+        }
+        this.draw();
+      }
+      setAnimation(animation) {
+        if (this.currentAnimation !== animation) {
+          this.currentAnimation = animation;
+          this.frameIndex = 0;
+          this.frameCount = 0;
+        }
+      }
+    }
+
+    // Düşman sınıfı: karaktere saldırır veya takip eder
+    class Enemy {
+      constructor({ position, animations }) {
+        this.position = position;
+        this.velocity = { x: 0, y: 0.3 };
+        this.width = 300;
+        this.height = 300;
+        this.animations = animations;
+        this.currentAnimation = 'idle';
+        this.frameIndex = 0;
+        this.frameCount = 0;
+        this.health = 100;
+        this.isAlive = true;
+        this.attackCooldown = 1000;
+      }
+      draw() {
+        if (!this.isAlive) return;
+        const anim = this.animations[this.currentAnimation];
+        if (!anim.image || !anim.loaded) return;
+        c.save();
+        const facingRight = this.position.x > character.position.x;
+        if (!facingRight) {
+          c.scale(-1, 1);
+          c.translate(-canvas.width, 0);
+        }
+        const drawX = facingRight ? 
+                     this.position.x - camera.x : 
+                     canvas.width - (this.position.x - camera.x) - this.width;
+        c.drawImage(
+          anim.image,
+          this.frameIndex * anim.frameWidth,
+          0,
+          anim.frameWidth,
+          anim.frameHeight,
+          drawX,
+          this.position.y - camera.y,
+          this.width,
+          this.height
+        );
+        c.restore();
+      }
+      takeDamage(amount) {
+        if (!this.isAlive) return;
+        this.health -= amount;
+        if (this.health <= 0) {
+          this.health = 0;
+          this.isAlive = false;
+          this.currentAnimation = 'idle';
+          this.velocity.x = 0;
+        } else {
+          this.currentAnimation = 'hurt';
+          this.frameIndex = 0;
+          this.frameCount = 0;
+        }
+      }
+      // Düşmanı günceller: takip, saldırı, fizik
+      update() {
+        if (!this.isAlive) return;
+        const dx = character.position.x - this.position.x;
+        const distance = Math.abs(dx);
+        const attackDistance = 100;
+        const chaseDistance = 500;
+        if (distance < attackDistance) {
+          this.currentAnimation = this.currentAnimation !== 'hurt' ? 'attack' : this.currentAnimation;
+          this.velocity.x = 0;
+          if (this.attackCooldown <= 0) {
+            character.takeDamage(5);
+            this.attackCooldown = 60;
+          }
+        } else if (distance < chaseDistance) {
+          this.currentAnimation = this.currentAnimation !== 'hurt' ? 'attack' : this.currentAnimation;
+          this.velocity.x = dx > 0 ? 2 : -2;
+        } else {
+          this.currentAnimation = this.currentAnimation !== 'hurt' ? 'idle' : this.currentAnimation;
+          this.velocity.x = 0;
+        }
+        if (this.attackCooldown > 0) {
+          this.attackCooldown--;
+        }
+        const anim = this.animations[this.currentAnimation];
+        this.frameCount++;
+        if (this.frameCount >= 60 / anim.frameRate) {
+          this.frameIndex = (this.frameIndex + 1) % anim.frameCount;
+          this.frameCount = 0;
+          if (this.currentAnimation === 'hurt' && this.frameIndex === 0) {
+            this.currentAnimation = distance < chaseDistance ? 'attack' : 'idle';
+          }
+        }
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+        this.position.x = Math.max(0, Math.min(this.position.x, world.width - this.width));
+        if (this.position.y + this.height + this.velocity.y >= canvas.height - 180) {
+          this.velocity.y = 0;
+          this.position.y = canvas.height - 180 - this.height;
+        } else {
+          this.velocity.y += gravity;
+        }
+        this.draw();
+      }
+    }
+
+    // Çarpışma bloğu: zemin gibi engeller
+    class CollisionBlock {
+      constructor({ position, width, height }) {
+        this.position = position;
+        this.width = width;
+        this.height = height;
+      }
+      draw() {}
+      update() {
+        this.draw();
+      }
+    }
+
+    // Karakter nesnesi: oyuncunun kontrol ettiği karakter
+    const character = new Character({
+      position: { x: 100, y: 0 },
+      animations: {
+        idle: { image: new Image(), imageSrc: './img/idle.png', frameWidth: 64, frameHeight: 64, frameCount: 2, frameRate: 2, loaded: false },
+        walk: { image: new Image(), imageSrc: './img/walk.png', frameWidth: 64, frameHeight: 64, frameCount: 1, frameRate: 2, loaded: false },
+        jump: { image: new Image(), imageSrc: './img/jump.png', frameWidth: 64, frameHeight: 64, frameCount: 1, frameRate: 30, loaded: false },
+        attack: { image: new Image(), imageSrc: './img/attack.png', frameWidth: 64, frameHeight: 64, frameCount: 2, frameRate: 5, loaded: false },
+        hurt: { image: new Image(), imageSrc: './img/hurt.png', frameWidth: 64, frameHeight: 64, frameCount: 2, frameRate: 5, loaded: false },
+      },
+    });
+
+    // Düşman nesnesi
+    const enemy = new Enemy({
+      position: { x: 2000, y: 0 },
+      animations: {
+        idle: { image: new Image(), imageSrc: './img/enemy_idle.png', frameWidth: 192, frameHeight: 192, frameCount: 4, frameRate: 2, loaded: false },
+        attack: { image: new Image(), imageSrc: './img/enemy_attack.png', frameWidth: 192, frameHeight: 192, frameCount: 3, frameRate: 5, loaded: false },
+        hurt: { image: new Image(), imageSrc: './img/enemy_hurt.png', frameWidth: 192, frameHeight: 192, frameCount: 3, frameRate: 5, loaded: false },
+      },
+    });
+
+    // Animasyon resimlerini yükler
+    Object.values(character.animations).forEach(anim => {
+      anim.image.src = anim.imageSrc;
+      anim.image.onload = () => {
+        anim.loaded = true;
+      };
+    });
+    Object.values(enemy.animations).forEach(anim => {
+      anim.image.src = anim.imageSrc;
+      anim.image.onload = () => {
+        anim.loaded = true;
+      };
+    });
+
+    // Arka plan resmi
+    const background = new Sprite({
+      position: { x: 0, y: 0 },
+      imageSrc: './img/background.jpg',
+    });
+
+    // Zemin çarpışma bloğu
+    const collisionBlock = new CollisionBlock({
+      position: { x: 0, y: canvas.height - 180 },
+      width: world.width,
+      height: 20,
+    });
+
+    // Klavye tuş takibi
+    const keys = {
+      d: { pressed: false },
+      a: { pressed: false },
+    };
+
+    // Ana oyun döngüsü: her kareyi günceller
+    function animate() {
+      window.requestAnimationFrame(animate);
+      c.fillStyle = 'white';
+      c.fillRect(0, 0, canvas.width, canvas.height);
+      background.update();
+      camera.follow(character);
+      collisionBlock.update();
+      character.update();
+      enemy.update();
+      // Karakterin saldırısı düşmana isabet ederse hasar verir
+      if (character.currentAnimation === 'attack' && !character.attackHit && character.isAlive && enemy.isAlive) {
+        if (
+          character.position.x < enemy.position.x + enemy.width &&
+          character.position.x + character.width > enemy.position.x &&
+          character.position.y < enemy.position.y + enemy.height &&
+          character.position.y + character.height > enemy.position.y
+        ) {
+          enemy.takeDamage(character.attackDamage || 10);
+          character.attackHit = true;
+        }
+      }
+      character.velocity.x = 0;
+      if (keys.d.pressed) {
+        character.velocity.x = character.moveSpeed || 1;
+        character.setAnimation('walk');
+        character.facingRight = true;
+      } else if (keys.a.pressed) {
+        character.velocity.x = -(character.moveSpeed || 1);
+        character.setAnimation('walk');
+        character.facingRight = false;
+      }
+    }
+    animate();
+
+    // Klavye tuşlarına basıldığında
+    window.addEventListener('keydown', (event) => {
+      if (!musicUnmuted) {
+        startMusic();
+      }
+      switch (event.key) {
+        case 'd': // Sağa hareket
+          keys.d.pressed = true;
+          break;
+        case 'a': // Sola hareket
+          keys.a.pressed = true;
+          break;
+        case 'w': // Zıplama
+          if (character.position.y + character.height >= canvas.height - 180) {
+            character.velocity.y = -20;
+            character.setAnimation('jump');
+          }
+          break;
+        case 's': // Saldırı
+          character.setAnimation('attack');
+          break;
+      }
+    });
+
+    // Tuş bırakıldığında
+    window.addEventListener('keyup', (event) => {
+      switch (event.key) {
+        case 'd':
+          keys.d.pressed = false;
+          if (!keys.a.pressed) {
+            character.setAnimation('idle');
+          }
+          break;
+        case 'a':
+          keys.a.pressed = false;
+          if (!keys.d.pressed) {
+            character.setAnimation('idle');
+          }
+          break;
+      }
+    });
+
+    // Pencere boyutu değiştiğinde canvas'ı günceller
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      camera.width = canvas.width;
+      camera.height = canvas.height;
+    });
+
+    // Ses seviyesini kontrol eder
+    const volumeControl = document.getElementById('volumeControl');
+    const music = document.getElementById('backgroundMusic');
+    volumeControl.addEventListener('input', function() {
+      music.volume = this.value;
+    });
+  </script>
+</body>
+</html>
