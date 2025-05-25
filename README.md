@@ -34,6 +34,9 @@ Oynanış videosu :
 ## Ekran Görüntüleri
 
 ![](img/şansınıDene1.png)
+![](img/şansınıDene2.png)
+![](img/anaEkran1.png)
+![](img/anaEkran2.png)
 
 ###  Assetler
 Oyun içindeki karakterler , arkaplan ve bunların animasyonları kendim tarafından tasarlanmıştır.
