@@ -13,6 +13,7 @@ RetcapS.github.io
 - [Oynanış Mekanikleri](#oynanış-mekanikleri)
 - [Ekran Görüntüleri](#ekran-görüntüleri)
 - [Assetler](#Assetler)
+- [Kaynakça](#kaynakça)
 
 ## Oyun Hakkında
 **Souls Luck**, oyuncuların bir karakteri yönlendirerek oyunun başında rastgele verilmiş güçlendirmeler ile oyun içindeki bossu öldürmeye çalıştığı 2D bir oyundur.
@@ -38,3 +39,17 @@ Oyunda kullanılan temel mekanikler şunlardır:
 ###  Assetler
 Oyun içindeki karakterler , arkaplan ve bunların animasyonları kendim tarafından tasarlanmıştır.
 Müzik dış bir kaynaktan alınmıştır. (https://www.youtube.com/watch?v=OaXMG4OzGOo)
+
+## Kaynakça
+Nasıl yapabileceğime dair bir fikrim olması için izlediğim youtube videoları
+```
+https://www.youtube.com/watch?v=rTVoyWu8r6g&t=6765s
+https://www.youtube.com/watch?v=vyqbNFMDRGQ&t=1207s
+```
+-ChatGPT
+-Grok
+-Tasarımları ve animasyonları yaparken kullandığım uygulama
+```
+https://www.aseprite.org/
+```
+
