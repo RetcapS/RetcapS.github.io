@@ -288,9 +288,9 @@
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
         this.position.x = Math.max(0, Math.min(this.position.x, world.width - this.width));
-       if (this.position.y + this.height + this.velocity.y >= canvas.height - 100) {
+       if (this.position.y + this.height + this.velocity.y >= canvas.height - 180) {
            this.velocity.y = 0;
-           this.position.y = canvas.height - 100 - this.height;
+           this.position.y = canvas.height - 180 - this.height;
        if (this.currentAnimation === 'jump') {
            this.currentAnimation = 'idle';
   }
@@ -399,9 +399,9 @@
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
         this.position.x = Math.max(0, Math.min(this.position.x, world.width - this.width));
-        if (this.position.y + this.height + this.velocity.y >= canvas.height - 100) {
+        if (this.position.y + this.height + this.velocity.y >= canvas.height - 180) {
           this.velocity.y = 0;
-          this.position.y = canvas.height - 100 - this.height;
+          this.position.y = canvas.height - 180 - this.height;
         } else {
           this.velocity.y += gravity;
         }
@@ -466,7 +466,7 @@
 
     // Zemin çarpışma bloğu
     const collisionBlock = new CollisionBlock({
-      position: { x: 0, y: canvas.height - 100 },
+      position: { x: 0, y: canvas.height - 180 },
       width: world.width,
       height: 20,
     });
@@ -525,7 +525,7 @@
           keys.a.pressed = true;
           break;
         case 'w': // Zıplama
-          if (character.position.y + character.height >= canvas.height - 100) {
+          if (character.position.y + character.height >= canvas.height - 180) {
             character.velocity.y = -20;
             character.setAnimation('jump');
           }
