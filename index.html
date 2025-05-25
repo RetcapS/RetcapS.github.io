@@ -79,7 +79,7 @@
       position: fixed;
       top: 10px;
       left: 10px;
-      z-index: 1000;
+      z-index: 1800;
     }
   </style>
 </head>
@@ -288,11 +288,11 @@
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
         this.position.x = Math.max(0, Math.min(this.position.x, world.width - this.width));
-       if (this.position.y + this.height + this.velocity.y >= canvas.height - 180) {
-           this.velocity.y = 0;
-           this.position.y = canvas.height - 180 - this.height;
-       if (this.currentAnimation === 'jump') {
-           this.currentAnimation = 'idle';
+if (this.position.y + this.height + this.velocity.y >= canvas.height - 180) {
+  this.velocity.y = 0;
+  this.position.y = canvas.height - 180 - this.height;
+  if (this.currentAnimation === 'jump') {
+    this.currentAnimation = 'idle';
   }
 } else {
   this.velocity.y += gravity;
@@ -424,7 +424,7 @@
 
     // Karakter nesnesi: oyuncunun kontrol ettiği karakter
     const character = new Character({
-      position: { x: 50, y: 0 },
+      position: { x: 100, y: 0 },
       animations: {
         idle: { image: new Image(), imageSrc: './img/idle.png', frameWidth: 64, frameHeight: 64, frameCount: 2, frameRate: 2, loaded: false },
         walk: { image: new Image(), imageSrc: './img/walk.png', frameWidth: 64, frameHeight: 64, frameCount: 1, frameRate: 2, loaded: false },
@@ -466,7 +466,7 @@
 
     // Zemin çarpışma bloğu
     const collisionBlock = new CollisionBlock({
-      position: { x: 0, y: canvas.height - 180 },
+      position: { x: 0, y: canvas.height - 1800 },
       width: world.width,
       height: 20,
     });
