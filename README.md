@@ -7,9 +7,8 @@
 ## İçindekiler
 - [Oyun Hakkında](#oyun-hakkında)
 - [Oynanış Mekanikleri](#oynanış-mekanikleri)
-- [Oynanış Videosu](#oynanış-videosu)
 - [Ekran Görüntüleri](#ekran-görüntüleri)
-- [Kullanılan Kaynaklar](#assetler)
+- [Assetler](#Assetler)
 
 ## Oyun Hakkında
 **Souls Luck**, oyuncuların bir karakteri yönlendirerek oyunun başında rastgele verilmiş güçlendirmeler ile oyun içindeki bossu öldürmeye çalıştığı 2D bir oyundur.
@@ -24,12 +23,6 @@ Oyunda kullanılan temel mekanikler şunlardır:
 - **Kontroller**:
   -Şarkının sesini ayarlayabileceğimiz bir çubuk içeriyor.
 
-
-## Oynanış Videosu
-Oynanış videosu :
- ```
-
- ```
 
 ## Ekran Görüntüleri
 
