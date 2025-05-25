@@ -46,9 +46,7 @@ Nasıl yapabileceğime dair bir fikrim olması için izlediğim youtube videolar
 https://www.youtube.com/watch?v=rTVoyWu8r6g&t=6765s
 https://www.youtube.com/watch?v=vyqbNFMDRGQ&t=1207s
 ```
--ChatGPT
--Grok
--Tasarımları ve animasyonları yaparken kullandığım uygulama
+Tasarımları ve animasyonları yaparken kullandığım uygulama
 ```
 https://www.aseprite.org/
 ```
