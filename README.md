@@ -33,7 +33,7 @@ Oynanış videosu :
 
 ## Ekran Görüntüleri
 
-(img/şansınıDene1.png)
+![](img/şansınıDene1.png)
 
 ###  Assetler
 Oyun içindeki karakterler , arkaplan ve bunların animasyonları kendim tarafından tasarlanmıştır.
