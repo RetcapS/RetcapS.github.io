@@ -4,6 +4,10 @@
 
 **Souls Luck**, başta rastgele olarak verilen boost özelliklerini kullanarak oyundaki yaratığı öldürmeye çalıştığın bir oyundur.
 
+oyuna buradan erişebilirsiniz.
+```
+RetcapS.github.io
+```
 ## İçindekiler
 - [Oyun Hakkında](#oyun-hakkında)
 - [Oynanış Mekanikleri](#oynanış-mekanikleri)
